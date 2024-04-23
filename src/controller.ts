@@ -1,11 +1,9 @@
-import { Browser } from 'puppeteer';
+
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import delay from 'delay';
-import { account } from './constants';
+
 import * as api from './api/facebook-api';
-import { token } from './constants';
-import * as fb from './perfom/facebook';
 
 
 
@@ -24,13 +22,31 @@ export async function createPage(browser : any){
     console.error('An error occurred:', error);
   }
 }
-export async function getAllJob(arrayOfValues: any) {
+export async function getOneJob(nameJob: any,account : any) {
+    const result = await api.api_get_job(nameJob, account.TDS_token);
+    if (typeof result.error !== 'undefined') {
+      // Key 'error' tồn tại và có giá trị không phải undefined
+      console.log('Tồn tại error');
+      console.log(result.error);
+
+      if(result['error']=="Thao tác quá nhanh vui lòng chậm lại"){
+        await new Promise(resolve => {
+          setTimeout(resolve, result['countdown']);
+        });
+        await getOneJob(nameJob,account);
+      }else{
+        return null;
+      }
+    }
+    return result;
+}
+export async function getAllJob(arrayOfValues: any,account : any) {
   const results: { [key: string]: any } = {};
   const keys = Object.keys(arrayOfValues);
   const lastKey = keys[keys.length - 1];
   const lastValue = arrayOfValues[lastKey];
   for (let value of arrayOfValues) {
-      const result = await api.api_get_job(value, token.TDS_token);
+      const result = getOneJob(value,account);
       results[value] = result;
 
       // Chờ 70 giây trước khi gọi API tiếp theo (nếu cần)

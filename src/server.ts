@@ -1,13 +1,14 @@
 import * as mainFacebook from './mainFacebook';
-import * as mainIntargram from './mainIntargram';
+// import * as mainIntargram from './mainIntargram';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import * as controller from './controller';
+import { account } from './constants';
 
 
 puppeteer.use(StealthPlugin());
 
-async function login(arrayOfValues: any) {
+async function createBrowser(arrayOfValues: any) {
     const browsers: { [key: string]: any } = {};
     let x = 0;
     let y = 0;
@@ -45,61 +46,44 @@ export async function Chia(resultsfb: any, num: number) {
     // Trả về mảng các phần đã chia
     return dividedResults;
 }
-// export async function main(){
-//     const arrayOfValues = ['facebook','facebook1'];
-//     const browsers = await login(arrayOfValues);
-//     const arrayOfValuesfb = ['follow','like'];
-//     const resultsfb = await controller.getAllJob(arrayOfValuesfb);
-//     // const arrayOfValuesIntar = ['instagram_like'];
-//     const dividedResults= await Chia(resultsfb,arrayOfValues.length);
-//     const promises = [];
-//     let ii=0;
-//     for (const [value, browser] of Object.entries(browsers)) {
-//         console.log(value);
-//         // switch (value){
-//         //     case 'facebook':
-//         //         mainFacebook.main(browser,combinedArray[ii],arrayOfValuesfb);
-//         //         ii++;
-//         //         break;
-//         //     // case 'intargram':
-//         //     //     mainIntargram.main(browser,resultsIntar,arrayOfValuesIntar);
-//         //     //     break;
-//         // }
-//         console.log(dividedResults[ii]);
-//         promises.push(mainFacebook.main(browser, dividedResults[ii], arrayOfValuesfb));
-//         ii++;
-//     }
-//     console.log('xádfasdfasdfasdf',promises);
-    
-//     while(1==1){
-//         const resultsfb = await controller.getAllJob(arrayOfValuesfb);
-//         const dividedResults= await Chia(resultsfb,arrayOfValues.length);
-//         for(const promise of promises){
-//             promises.push(mainFacebook.main(browser, dividedResults[ii], arrayOfValuesfb));
-//         }
-//         await Promise.all(promises);
-//     }
-    
-// }
+export async function standardizedData(resultsfb: any) {
+    const part = {
+        follow: Array.isArray(resultsfb.follow) ? resultsfb.follow : [], // Nếu follow không phải là một mảng, gán một mảng rỗng
+        like: Array.isArray(resultsfb.like) ? resultsfb.like : [] // Tương tự cho like
+    };
+    return part;
+}
 export async function main(){
-    const arrayOfValues = ['facebook'/*,'facebook1','facebook2','facebook3','facebook4','facebook5','facebook5+1','facebook7'*/];
-    const browsers = await login(arrayOfValues);
-    const arrayOfValuesfb = ['follow'];
+    const arrayOfValues = ['facebook0','facebook2'/*,'facebook2','facebook3','facebook4','facebook5','facebook5+1','facebook7'*/];
+    const browsers = await createBrowser(arrayOfValues);
+    const arrayOfValuesfb = ['like'];
     
     while (true) {
-        const resultsfb = await controller.getAllJob(arrayOfValuesfb);
-        const dividedResults = await Chia(resultsfb, arrayOfValues.length);
-
         const promises = [];
-        let ii = 0;
+        const promises0 = [];
+        const promises1 = [];
 
-        for (const [value, browser] of Object.entries(browsers)) {
-            console.log(value);
-            console.log(dividedResults[ii]);
-            promises.push(mainFacebook.main(browser, dividedResults[ii], arrayOfValuesfb));
-            ii++;
+        
+        for (const value of arrayOfValues) {
+            console.log(account[value as keyof typeof account]);
+            const promise = controller.getAllJob(arrayOfValuesfb, account[value as keyof typeof account]);
+            promises1.push(promise);
         }
-
+        const resultsfbArray = await Promise.all(promises1);
+        for( let i = 0; i < arrayOfValues.length; i++){
+            const resultsfb = resultsfbArray[i];
+            const resultsfb1 = standardizedData(resultsfb);
+            promises0.push(resultsfb1);
+        }
+        const resultsfbArray1 = await Promise.all(promises0);
+        // Xử lý kết quả và gọi mainFacebook.main() cho mỗi value
+        for (let i = 0; i < arrayOfValues.length; i++) {
+            const value = arrayOfValues[i];
+            const resultsfb = resultsfbArray1[i];
+            console.log(value);
+            console.log(resultsfb);
+            promises.push(mainFacebook.main(browsers[value], resultsfb,value));
+        }
         console.log('Running promises:', promises.length);
         await Promise.all(promises);
 
@@ -107,4 +91,59 @@ export async function main(){
         await new Promise(resolve => setTimeout(resolve, 60000)); // Delay 60 seconds
     }
 }
-main();
+export async function main1(){
+    const arrayOfValues = ['facebook0','facebook2'/*'facebook4','facebook5','facebook5+1','facebook7'*/];
+    const browsers = await createBrowser(arrayOfValues);
+    const arrayOfValuesfb = ['like'];
+    
+    while (true) {
+        const promises = [];
+        const promises0 = [];
+        const promises1 = [];
+
+        
+        for (const value of arrayOfValues) {
+            console.log(account[value as keyof typeof account]);
+            const promise = controller.getAllJob(arrayOfValuesfb, account[value as keyof typeof account]);
+            promises1.push(promise);
+        }
+        const resultsfbArray = await Promise.all(promises1);
+        for( let i = 0; i < arrayOfValues.length; i++){
+            const resultsfb = resultsfbArray[i];
+            const resultsfb1 = standardizedData(resultsfb);
+            promises0.push(resultsfb1);
+        }
+        const resultsfbArray1 = await Promise.all(promises0);
+        // Xử lý kết quả và gọi mainFacebook.main() cho mỗi value
+        for (let i = 0; i < arrayOfValues.length; i++) {
+            const dividedResults = await Chia(resultsfbArray1[i], 2);
+            const value = arrayOfValues[i];
+            promises.push(mainFacebook.main1(browsers[value], dividedResults,value));
+        }
+        console.log('Running promises:', promises.length);
+        await Promise.all(promises);
+
+        // Add a delay to avoid rapid API calls
+        await new Promise(resolve => setTimeout(resolve, 10000)); // Delay 60 seconds
+    }
+}
+export async function main2(){
+    const arrayOfValues = ['facebook0','facebook1'/*'facebook4','facebook5','facebook5+1','facebook7'*/];
+    const browsers = await createBrowser(arrayOfValues);
+    const arrayOfValuesfb = ['like'];
+    
+    while (true) {
+        const promises = [];
+        // Xử lý kết quả và gọi mainFacebook.main() cho mỗi value
+        for (let i = 0; i < arrayOfValues.length; i++) {
+            const value = arrayOfValues[i];
+            promises.push(mainFacebook.main2(browsers[value], arrayOfValuesfb,value));
+        }
+        console.log('Running promises:', promises.length);
+        await Promise.all(promises);
+
+        // Add a delay to avoid rapid API calls
+        await new Promise(resolve => setTimeout(resolve, 10000)); // Delay 60 seconds
+    }
+}
+main2()
