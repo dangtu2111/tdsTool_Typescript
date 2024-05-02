@@ -1,23 +1,61 @@
 
-// import * as fb from './perfom/facebook';
-// import * as controller from './controller';
+import * as ig from './perfom/intargram';
+import * as controller from './controller';
+import delay from 'delay';
+import { account, accountInta } from './constants';
+export async function main(browser : any,results:any, accountName : any){
+   // Danh sách các giá trị
+   
+   // , 'likegiare', 'likesieure', 'reaction', 'comment', 'share', 'reactcmt', 'group', 'page'
 
-// import { account1 } from './constants';
-// export async function main(browser : any,results:any,arrayOfValues:any){
-//    // Danh sách các giá trị
-//    // , 'likegiare', 'likesieure', 'reaction', 'comment', 'share', 'reactcmt', 'group', 'page'
-//    // Mảng kết quả
-//    const pages=[];
-
-//    // Duyệt qua từng giá trị trong mảng
-//     for (let value of arrayOfValues) {
-//       const page = await controller.createPage(browser);
-//       pages.push(page);
-//     }
-//     await controller.fillForm(pages[0],'input[aria-label="Phone number, username, or email"][name="username"]','input[aria-label="Password"]','button._acan._acap._acas._aj1-._ap30','https://www.instagram.com/accounts/login/',account1.email,account1.password);
+     const page = await controller.createPage(browser);
+    // await controller.fillForm(page,'#email','#pass','button[value="1"]._42ft._4jy0._6lth._4jy6._4jy1.selected._51sy','https://www.facebook.com/',account[accountName as keyof typeof account].email,account[accountName as keyof typeof account].password);
+    await controller.loginCookie(page,account[accountName as keyof typeof account].cookie,'https://www.instagram.com/');
+    await delay(2000);
+    await ig.instagram(page,results,account[accountName as keyof typeof account]);
+    await delay(80000);
+    // results = await controller.getAllJob(arrayOfValues);
+ 
     
-//     for (let value of arrayOfValues) {
-//       fb.facebook(pages[1],  results);
-//     }
-//     // fb.facebook(pages[0],'follow', results['0']);
-// }
+    
+            // In dữ liệu trả về từ hàm api_get_money
+    
+        
+}
+export async function create(browser : any,arrayOfValuesfb:any, accountName : any){
+    const page = await controller.createPage(browser);
+    // await controller.fillForm(page,'#email','#pass','button[value="1"]._42ft._4jy0._6lth._4jy6._4jy1.selected._51sy','https://www.facebook.com/',account[accountName as keyof typeof account].email,account[accountName as keyof typeof account].password);
+    await controller.loginCookie(page,accountInta[accountName as keyof typeof account].cookie,'https://www.instagram.com/');
+    await delay(2000);
+    await ig.instagram(page,arrayOfValuesfb,account[accountName as keyof typeof account]);
+    await delay(5000);
+    page.close();
+    return 'Hoan thanh';
+    
+}
+export async function main1(browser : any,results:any, accountName : any){
+  // Danh sách các giá trị
+  
+  // , 'likegiare', 'likesieure', 'reaction', 'comment', 'share', 'reactcmt', 'group', 'page'
+  const promises = [];
+  for(const result of results){
+    promises.push(create(browser,result,accountName));
+  }
+  console.log('Running promises:', promises.length);
+  await Promise.all(promises);
+   // results = await controller.getAllJob(arrayOfValues);
+       
+}
+export async function main2(browser : any,arrayOfValuesfb:any, accountName : any){
+  // Danh sách các giá trị
+  
+  // , 'likegiare', 'likesieure', 'reaction', 'comment', 'share', 'reactcmt', 'group', 'page'
+  const promises = [];
+  for(const result of arrayOfValuesfb){
+    promises.push(create(browser,arrayOfValuesfb,accountName));
+  }
+  console.log('Running promises:', promises.length);
+  await Promise.all(promises);
+   // results = await controller.getAllJob(arrayOfValues);
+       
+}

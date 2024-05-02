@@ -22,8 +22,10 @@ export async function createPage(browser : any){
     console.error('An error occurred:', error);
   }
 }
-export async function getOneJob(nameJob: any,account : any) {
+export async function getOneJob(nameJob: any,account : any): Promise<any> {
     const result = await api.api_get_job(nameJob, account.TDS_token);
+    console.log(result);
+
     if (typeof result.error !== 'undefined') {
       // Key 'error' tồn tại và có giá trị không phải undefined
       console.log('Tồn tại error');
@@ -31,9 +33,9 @@ export async function getOneJob(nameJob: any,account : any) {
 
       if(result['error']=="Thao tác quá nhanh vui lòng chậm lại"){
         await new Promise(resolve => {
-          setTimeout(resolve, result['countdown']);
+          setTimeout(resolve,10000);
         });
-        await getOneJob(nameJob,account);
+        return await getOneJob(nameJob,account);
       }else{
         return null;
       }
@@ -78,10 +80,10 @@ function parseCookieString(cookieString: string): Array<{ name: string, value: s
   return cookies;
 }
 
-export async function loginCookie(page : any,cookieString: string){
+export async function loginCookie(page : any,cookieString: string,url : string){
   const cookies = parseCookieString(cookieString);
   console.log('xasdfasdfasdfasdfasdf',cookies);
-  await page.goto('https://www.facebook.com/login');
+  await page.goto(url);
   for (const cookie of cookies) {
     await page.setCookie(cookie);
   }
@@ -91,14 +93,6 @@ export async function loginCookie(page : any,cookieString: string){
      // Chờ một khoảng thời gian để đảm bảo trang đã được tải đúng cách
      await delay(2000);
 
-     // Kiểm tra xem đã đăng nhập thành công hay không bằng cách kiểm tra sự hiện diện của một phần tử duy nhất trên trang
-     const loggedIn = await page.evaluate(() => !!document.querySelector('[data-testid="account_settings_icon"]'));
- 
-     if (loggedIn) {
-         console.log('Đăng nhập thành công!');
-     } else {
-         console.log('Đăng nhập không thành công!');
-     }
 }
 
 
@@ -124,3 +118,4 @@ export async function fillForm(page : any, classUser :any, classPass: any,classB
   }
   await delay(5000);
 }
+

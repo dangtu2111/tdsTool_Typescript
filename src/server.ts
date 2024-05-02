@@ -1,4 +1,5 @@
 import * as mainFacebook from './mainFacebook';
+import * as mainIntargram from './mainIntargram';
 // import * as mainIntargram from './mainIntargram';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
@@ -92,7 +93,7 @@ export async function main(){
     }
 }
 export async function main1(){
-    const arrayOfValues = ['facebook0','facebook2'/*'facebook4','facebook5','facebook5+1','facebook7'*/];
+    const arrayOfValues = ['facebook0','facebook2','facebook3'/*,'facebook5','facebook5+1','facebook7'*/];
     const browsers = await createBrowser(arrayOfValues);
     const arrayOfValuesfb = ['like'];
     
@@ -100,8 +101,6 @@ export async function main1(){
         const promises = [];
         const promises0 = [];
         const promises1 = [];
-
-        
         for (const value of arrayOfValues) {
             console.log(account[value as keyof typeof account]);
             const promise = controller.getAllJob(arrayOfValuesfb, account[value as keyof typeof account]);
@@ -128,7 +127,7 @@ export async function main1(){
     }
 }
 export async function main2(){
-    const arrayOfValues = ['facebook0','facebook1'/*'facebook4','facebook5','facebook5+1','facebook7'*/];
+    const arrayOfValues = ['facebook0','facebook2',/*'facebook3',,'facebook5+1','facebook7'*/];
     const browsers = await createBrowser(arrayOfValues);
     const arrayOfValuesfb = ['like'];
     
@@ -145,5 +144,19 @@ export async function main2(){
         // Add a delay to avoid rapid API calls
         await new Promise(resolve => setTimeout(resolve, 10000)); // Delay 60 seconds
     }
+}
+export async function mainInta(){
+    const arrayOfValues = [ 'intagram0',/*'facebook0','facebook1'/*'facebook4','facebook5','facebook5+1','facebook7'*/];
+    const browsers = await createBrowser(arrayOfValues);
+    const arrayOfValuesfb = ['instagram_like'];
+        const promises = [];
+        // Xử lý kết quả và gọi mainFacebook.main() cho mỗi value
+        for (let i = 0; i < arrayOfValues.length; i++) {
+            const value = arrayOfValues[i];
+            promises.push(mainIntargram.main2(browsers[value], arrayOfValuesfb,value));
+        }
+        console.log('Running promises:', promises.length);
+        await Promise.all(promises);
+        browsers.close();
 }
 main2()
