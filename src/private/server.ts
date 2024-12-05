@@ -83,69 +83,77 @@ class FacebookManager {
       }
 
     async main(accounts: any[], nameJobs: string[], TDSacount: any[]): Promise<void> {
-        // Tạo trình duyệt cho các tài khoản
-        await this.browserManager.createBrowsers(accounts);
-    
-        const maxIterations = 5; // Số lần lặp tối đa (điều kiện dừng)
-        let iteration = 0;
         
-        const tds = new TDS(TDSacount[0].token, TDSacount[0].username, TDSacount[0].password);
-        const accountFB :any=[]
-        const pages:any=[]
-        for (const account of accounts) {
-            const fb = new Facebook(account.id, account.email, account.password, account.cookie, tds);
-            const page = await this.createPage(this.browserManager.getBrowser(account.name));
-            await fb.login(page);
-            accountFB.push(fb);
-            pages.push(page);
+        
+        
+        
+    
+        while (true) {
+            // Tạo trình duyệt cho các tài khoản
+            await this.browserManager.createBrowsers(accounts);
+        
+            const maxIterations = 5; // Số lần lặp tối đa (điều kiện dừng)
+            let iteration = 0;
             
-        }
-        
-        
-        
-    
-    
-        while (iteration < maxIterations) {
-            console.log(`Iteration ${iteration + 1} bắt đầu.`);
-            
-            
-            try {
-                let flag=false;
-                // Đợi tất cả các công việc hoàn thành
-                for (let i = 0; i < accountFB.length; i++) {
-
-                    tds.api_config_account(accountFB[i].id);
-                    await new Promise(resolve => setTimeout(resolve, 20000));
-                    flag=false;
-                    const fbAutomation = new FacebookAutomationManager(pages[i],accountFB[i]);
-                    for(let j=0; j<nameJobs.length;j++){
-                        const resultsfbArray = await accountFB[i].getOneJob(nameJobs[j]);
-                        if(resultsfbArray!=0||resultsfbArray!=1&&flag==false){
-                            const resultsfb = await this.standardizedData(resultsfbArray); // Chuẩn hóa dữ liệu
-                            console.log("resultsfb",resultsfb);
-                            console.log("nameJobs",nameJobs[j]);
-                            await fbAutomation.main(resultsfb, nameJobs[j]);
-                            // Chờ 5 giây
-                            await new Promise(resolve => setTimeout(resolve, 10000));
-                        }
-                        flag=true;
-                    }
-                    
-                }
-    
-            } catch (error) {
-                console.error("Lỗi xảy ra trong khi xử lý công việc:", error);
+            const tds = new TDS(TDSacount[0].token, TDSacount[0].username, TDSacount[0].password);
+            const accountFB :any=[]
+            const pages:any=[]
+            for (const account of accounts) {
+                const fb = new Facebook(account.id, account.email, account.password, account.cookie, tds);
+                const page = await this.createPage(this.browserManager.getBrowser(account.name));
+                await fb.login(page);
+                accountFB.push(fb);
+                pages.push(page);
+                
             }
+            while (iteration < maxIterations) {
+                console.log(`Iteration ${iteration + 1} bắt đầu.`);
+                
+                
+                try {
+                    let flag=false;
+                    // Đợi tất cả các công việc hoàn thành
+                    for (let i = 0; i < accountFB.length; i++) {
     
-            // Đợi trước khi lặp lại
-            console.log("Chờ 10 giây trước khi lặp lại...");
-            await new Promise(resolve => setTimeout(resolve, 10000));
-    
-            iteration++;
+                        tds.api_config_account(accountFB[i].id);
+                        await new Promise(resolve => setTimeout(resolve, 20000));
+                        flag=false;
+                        const fbAutomation = new FacebookAutomationManager(pages[i],accountFB[i]);
+                        for(let j=0; j<nameJobs.length;j++){
+                            const resultsfbArray = await accountFB[i].getOneJob(nameJobs[j]);
+                            if(resultsfbArray!=0||resultsfbArray!=1&&flag==false){
+                                const resultsfb = await this.standardizedData(resultsfbArray); // Chuẩn hóa dữ liệu
+                                console.log("resultsfb",resultsfb);
+                                console.log("nameJobs",nameJobs[j]);
+                                await fbAutomation.main(resultsfb, nameJobs[j]);
+                                // Chờ 5 giây
+                                await new Promise(resolve => setTimeout(resolve, 10000));
+                            }
+                            flag=true;
+                        }
+                        
+                    }
+        
+                } catch (error) {
+                    console.error("Lỗi xảy ra trong khi xử lý công việc:", error);
+                }
+        
+                // Đợi trước khi lặp lại
+                console.log("Chờ 10 giây trước khi lặp lại...");
+                await new Promise(resolve => setTimeout(resolve, 10000));
+        
+                iteration++;
+            }
+            for (const account of accounts) {
+                this.browserManager.closeAllBrowsers()
+            }
+        
+            console.log("Hoàn thành tất cả các vòng lặp.");
         }
-    
-        console.log("Hoàn thành tất cả các vòng lặp.");
-    }
+        
+
+        }
+        
     
     
 }
