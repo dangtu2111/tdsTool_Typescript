@@ -1,0 +1,18 @@
+{
+  "Facebook":[
+    {
+      "id":"100089902717451",
+      "name":"nguyen_ngan",
+      "email":"100089902717451",
+      "password":"tu@211102!",
+      "cookie":"datr=191KZ5xySP5Hr-9hRULMCC_K; sb=191KZ4XM_92HCVMiWY8Wbq_F; dpr=1.25; c_user=100089902717451; presence=C%7B%22t3%22%3A%5B%5D%2C%22utc3%22%3A1732959723087%2C%22v%22%3A1%7D; fr=18g6BKupr7OG61pfm.AWWnD7wR9CP9SzhCinNDrw7y-Nc.BnSt3l..AAA.0.0.BnSt3l.AWWh4rL-Vsw; xs=36%3ADKQ4OubzryFnCQ%3A2%3A1732959710%3A-1%3A7632%3A%3AAcV4i964kbk7YEt5wJhzJRW0zkD8fMDemgFgQgKu8g; wd=150x426"
+    }
+  ],
+  "TDS":[
+    {
+      "token":"TDS0nI2IXZ2V2ciojIyVmdlNnIsISOwkDM1R3ZuFGZiojIyV2c1Jye",
+      "username":"dangtu0909",
+      "password":"tu211102"
+    }
+  ]
+}

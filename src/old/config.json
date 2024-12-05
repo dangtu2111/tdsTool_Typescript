@@ -1,0 +1,6 @@
+{
+  "getJob": {
+    "fields": ["facebook_reaction", "facebook_reactioncmt", "facebook_share", "facebook_follow", "facebook_page"],
+    "type": ""
+  }
+}

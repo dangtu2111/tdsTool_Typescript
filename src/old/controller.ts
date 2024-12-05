@@ -10,12 +10,15 @@ import * as api from './api/facebook-api';
 puppeteer.use(StealthPlugin());
 export async function createPage(browser : any){
   try {
-    
+    const context = browser.defaultBrowserContext();
+
+    // Từ chối quyền thông báo
+    await context.overridePermissions('https://www.facebook.com/', ['geolocation']);
     const page = await browser.newPage();
     await page.setExtraHTTPHeaders({
       'Accept-Language': 'en-US'
     });
-    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)');
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36');
     await page.setJavaScriptEnabled(true);
     return page;
   } catch (error) {
@@ -42,30 +45,34 @@ export async function getOneJob(nameJob: any,account : any): Promise<any> {
     }
     return result;
 }
-export async function getAllJob(arrayOfValues: any,account : any) {
-  const results: { [key: string]: any } = {};
+export async function getAllJob(arrayOfValues: any, account: any) {
+  const results: { [key: string]: any } = {}; // Đối tượng lưu kết quả
   const keys = Object.keys(arrayOfValues);
-  const lastKey = keys[keys.length - 1];
-  const lastValue = arrayOfValues[lastKey];
+  const lastValue = arrayOfValues[keys[keys.length - 1]];
+
   for (let value of arrayOfValues) {
-      const result = getOneJob(value,account);
+    try {
+      // Gọi hàm getOneJob và chờ kết quả
+      const result = await getOneJob(value, account); 
       results[value] = result;
 
-      // Chờ 70 giây trước khi gọi API tiếp theo (nếu cần)
-      console.log(value);
-      console.log(lastValue);
-      if(value != lastValue ){
-        await new Promise(resolve => {
-          setTimeout(resolve, 60000);
-        });
+      console.log(`Hoàn thành công việc cho: ${value}`);
+
+      // Nếu chưa phải phần tử cuối, chờ 60 giây
+      if (value !== lastValue) {
+        console.log(`Đang chờ 60 giây trước khi tiếp tục...`);
+        await new Promise(resolve => setTimeout(resolve, 60000));
       }
+    } catch (error) {
+      console.error(`Lỗi khi xử lý công việc cho: ${value}`, error);
+      results[value] = { error: error || error };
+    }
   }
 
-  // Log kết quả ra màn hình (nếu cần)
-  console.log(results);
-
+  console.log("Kết quả cuối cùng:", results);
   return results;
 }
+
 function parseCookieString(cookieString: string): Array<{ name: string, value: string }> {
   const cookiePairs = cookieString.split('; '); // Tách chuỗi thành các cặp key-value
 
@@ -80,20 +87,36 @@ function parseCookieString(cookieString: string): Array<{ name: string, value: s
   return cookies;
 }
 
-export async function loginCookie(page : any,cookieString: string,url : string){
-  const cookies = parseCookieString(cookieString);
-  console.log('xasdfasdfasdfasdfasdf',cookies);
-  await page.goto(url);
-  for (const cookie of cookies) {
-    await page.setCookie(cookie);
-  }
+export async function loginCookie(page: any, cookieString: string, url: string) {
+  try {
+    // Parse the cookie string
+    const cookies = parseCookieString(cookieString);
 
-    // Tải lại trang để sử dụng cookie
+    // Navigate to the specified URL
+    await page.goto(url, {
+      waitUntil: 'networkidle2' // Đợi trang tải xong
+  });
+    console.log('Navigated to:', url);
+
+    // Set each cookie on the page
+    for (const cookie of cookies) {
+      await page.setCookie(cookie);
+    }
+
+    // Reload the page to ensure cookies are applied
     await page.reload();
-     // Chờ một khoảng thời gian để đảm bảo trang đã được tải đúng cách
-     await delay(2000);
+    console.log('Page reloaded');
+  await new Promise(resolve => setTimeout(resolve, 3000));
 
+    // Optionally, verify cookies are set by checking the page's cookies
+    // const pageCookies = await page.cookies();
+    // console.log('Cookies set on page:', pageCookies);
+
+  } catch (error) {
+    console.error('Error during loginCookie execution:', error);
+  }
 }
+
 
 
 export async function fillForm(page : any, classUser :any, classPass: any,classButton:any,link:any,email:string,password:string){

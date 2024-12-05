@@ -58,12 +58,12 @@ export const classClick={
 export const account: AccountType = {
     facebook0:{
         email: '100089902717451',
-        password: 'tu211102!',
+        password: 'tu@211102!',
         idfb : '100089902717451',
         token:'EAAGNO4a7r2wBOxj0pNglrRZAj1ZBJWPRXQ5fAmCKAfexSZAkYPf2faLSKZAEU5Rja5e4TvuuIyPYiLWZA5xKmAvfzbVwB0sdqrRN0lqOYw3GuO64POrEshp52tH9SpEVShiOZBUiF8Vx1YXuR69ZCrQPP6WUcwH45eWkAfD5wz3J5jUaqVCiS0eQFrezAZDZD',
-        cookie: 'sb=daUzZiiThRcTL5SDsjZOkd-N; datr=daUzZlJKkum3wh8GXiT2an1x; dpr=1.25; c_user=100089902717451; xs=14%3A00jPmd3SmqxkAA%3A2%3A1714660741%3A-1%3A7632; fr=0GbUfySoWSqSNJWzp.AWVlWL2gff-18mziypEfG60wSK8.BmM6V1..AAA.0.0.BmM6WH.AWWnLYZ6yM8; ps_n=1; ps_l=1; presence=C%7B%22t3%22%3A%5B%5D%2C%22utc3%22%3A1714660745501%2C%22v%22%3A1%7D; wd=1034x695',
-        TDS_token : 'TDS0nIxIXZ2V2ciojIyVmdlNnIsISMxEjM1R3ZuFGZiojIyV2c1Jye',
-        TDS:'dangtu2111',
+        cookie: 'datr=191KZ5xySP5Hr-9hRULMCC_K; sb=191KZ4XM_92HCVMiWY8Wbq_F; dpr=1.25; c_user=100089902717451; presence=C%7B%22t3%22%3A%5B%5D%2C%22utc3%22%3A1732959723087%2C%22v%22%3A1%7D; fr=18g6BKupr7OG61pfm.AWWnD7wR9CP9SzhCinNDrw7y-Nc.BnSt3l..AAA.0.0.BnSt3l.AWWh4rL-Vsw; xs=36%3ADKQ4OubzryFnCQ%3A2%3A1732959710%3A-1%3A7632%3A%3AAcV4i964kbk7YEt5wJhzJRW0zkD8fMDemgFgQgKu8g; wd=150x426',
+        TDS_token : 'TDS0nI2IXZ2V2ciojIyVmdlNnIsISOwkDM1R3ZuFGZiojIyV2c1Jye',
+        TDS:'dangtu0909',
     },
     facebook1:{
         email: '61558068026966',
@@ -100,7 +100,7 @@ export const accountInta: AccountType = {
         password: 'tu211102',
         idfb : '100089902717451',
         token:'EAAGNO4a7r2wBOxj0pNglrRZAj1ZBJWPRXQ5fAmCKAfexSZAkYPf2faLSKZAEU5Rja5e4TvuuIyPYiLWZA5xKmAvfzbVwB0sdqrRN0lqOYw3GuO64POrEshp52tH9SpEVShiOZBUiF8Vx1YXuR69ZCrQPP6WUcwH45eWkAfD5wz3J5jUaqVCiS0eQFrezAZDZD',
-        cookie: 'fbm_124024574287414=base_domain=.instagram.com; ig_did=4EFC762E-D100-4B57-871C-1AA8CF3FA9C8; datr=li0ZZqax-N8zQgt915f0Bi5A; mid=ZhktowALAAH06TH_ANp5lGyyf_yi; ig_nrcb=1; ps_n=1; ps_l=1; dpr=1.25; shbid="17788\\05465659725792\\0541745459109:01f786280fae6c995d9138c74398faa8ef266cb47d90cfb162f08d3ba093a011f166e32f"; shbts="1713923109\\05465659725792\\0541745459109:01f73e99b498896b73a4448b1bbe4ef5757e89f1054fd5d1272728b4cd441640fc6302db"; csrftoken=vaSD070v5mi4rP2rrW9FCo5P4Zj3Xd7z; ds_user_id=65659725792; sessionid=65659725792%3AMF6Nendyby2wa4%3A3%3AAYdb_SSeAReDUi5hJwBPyyi-P6aidfcdVRbgzpQJqw; rur="PRN\\05465659725792\\0541745468165:01f79b58cd70f72203ad70aec8eda81b4253c4731f745bf34aa172d5f03abdac9e2c0ee0"',
+        cookie: 'sb=uV42ZmLtgp_wxh4wSPfE4U90; ps_n=1; ps_l=1; datr=iBdLZgWkiRwQQoSOJsCqGzq_; dpr=1.25; c_user=100089902717451; fr=1fyXI07lPxDGXNTWU.AWV3VTpOVbnhI_P_cTVhIdQY1P0.BnSrHT..AAA.0.0.BnSr50.AWUbMxW-f3w; xs=15%3AGVjHMAI5gDpzXQ%3A2%3A1732951670%3A-1%3A7632; presence=C%7B%22t3%22%3A%5B%5D%2C%22utc3%22%3A1732951680848%2C%22v%22%3A1%7D; wd=1035x695',
         TDS_token : 'TDS0nIxIXZ2V2ciojIyVmdlNnIsISMxEjM1R3ZuFGZiojIyV2c1Jye',
         TDS:'dangtu2111',
     },
