@@ -15,8 +15,10 @@ class BrowserManager {
 
     for (const account of accounts) {
       const browserArgs: string[] = [
-        `--window-size=${width},${height}`,
-        `--window-position=${x},${y}`,
+        '--no-sandbox',       // Thêm tùy chọn này nếu chạy trên hệ thống không có sandbox, như trong Docker hoặc một số VPS
+        '--disable-setuid-sandbox', // Tùy chọn thêm để vô hiệu hóa sandbox
+        '--disable-dev-shm-usage', // Để tránh lỗi bộ nhớ trong một số trường hợp
+        '--remote-debugging-port=9222', // Nếu bạn muốn truy cập trình duyệt từ xa
       ];
 
       let proxyAuth = null;
@@ -37,8 +39,10 @@ class BrowserManager {
       }
 
       const browser = await puppeteer.launch({
-        headless: true,
+        headless: false,
+        defaultViewport: null,
         args: browserArgs,
+        executablePath: '/usr/bin/chromium-browser',
       });
 
       const page = await browser.newPage();
