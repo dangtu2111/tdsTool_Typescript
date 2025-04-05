@@ -37,7 +37,7 @@ interface TDSAccount {
     const instagramManager = new InstagramManager(browserManager);
 
     // Các công việc Facebook cần thực hiện
-    const facebookJobs = [ 'facebook_follow','facebook_reaction'];
+    const facebookJobs = [ 'facebook_reaction'];
 
     try {
         // Thực hiện công việc cho Facebook
