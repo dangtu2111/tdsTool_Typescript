@@ -1,4 +1,3 @@
-
 import puppeteer, { Browser, Page } from 'puppeteer';
 
 class BrowserManager {
@@ -7,60 +6,56 @@ class BrowserManager {
 
   // Tạo trình duyệt cho từng tài khoản và lưu vào Map
   async createBrowsers(accounts: { username: string }[], proxies: string[] = []): Promise<void> {
-    let x = 0;
-    let y = 0;
-    const width = 700;
-    const height = 700;
-    const windowSize = { width, height };
-
-    for (const account of accounts) {
+    const browserPromises = accounts.map(async (account, index) => {
       const browserArgs: string[] = [
-        '--no-sandbox',       // Thêm tùy chọn này nếu chạy trên hệ thống không có sandbox, như trong Docker hoặc một số VPS
-        '--disable-setuid-sandbox', // Tùy chọn thêm để vô hiệu hóa sandbox
-        '--disable-dev-shm-usage', // Để tránh lỗi bộ nhớ trong một số trường hợp
-        '--remote-debugging-port=9222', // Nếu bạn muốn truy cập trình duyệt từ xa
+        '--no-sandbox',              // Bỏ sandbox để chạy trên server
+        '--disable-setuid-sandbox',  // Tắt sandbox bổ sung
+        '--disable-dev-shm-usage',   // Tránh lỗi bộ nhớ dùng chung
+        '--disable-gpu',             // Tắt GPU trong chế độ không đầu
+        '--disable-software-rasterizer', // Tối ưu cho không đầu
+        `--remote-debugging-port=${9222 + index}`, // Cổng khác nhau cho mỗi instance
       ];
 
       let proxyAuth = null;
 
       if (proxies.length > 0) {
-        // Randomly chọn proxy từ mảng proxies
         const randomProxy = proxies[Math.floor(Math.random() * proxies.length)];
-
-        // Tách proxy thành các phần
         const [ip, port, user, pass] = randomProxy.split(':');
 
-        // Thêm proxy server vào args
-        browserArgs.push(`--proxy-server=${ip}:${port}`);
+        if (!ip || !port || !user || !pass) {
+          console.error(`Invalid proxy format for ${randomProxy}. Expected: ip:port:user:pass`);
+          return; // Bỏ qua nếu proxy không hợp lệ
+        }
 
-        // Lưu thông tin xác thực proxy
+        browserArgs.push(`--proxy-server=${ip}:${port}`);
         proxyAuth = { username: user, password: pass };
         this.proxyAuthMap.set(account.username, proxyAuth);
       }
 
-      const browser = await puppeteer.launch({
-        headless: true,
-        defaultViewport: null,
-        args: browserArgs,
-        executablePath: '/usr/bin/chromium-browser',
-      });
+      try {
+        console.log(`Launching browser for ${account.username}...`);
+        const browser = await puppeteer.launch({
+          headless: true, // Chạy không đầu để không cần GUI
+          defaultViewport: { width: 1280, height: 720 }, // Kích thước mặc định
+          args: browserArgs,
+          executablePath: '/usr/bin/chromium-browser',
+        });
 
-      const page = await browser.newPage();
+        const page = await browser.newPage();
 
-      // Đăng nhập proxy nếu cần
-      if (proxyAuth) {
-        await page.authenticate(proxyAuth);
+        if (proxyAuth) {
+          await page.authenticate(proxyAuth);
+        }
+
+        this.browsers.set(account.username, browser);
+        console.log(`Browser for ${account.username} launched successfully.`);
+      } catch (error) {
+        console.error(`Failed to launch browser for ${account.username}:`, error);
       }
+    });
 
-      this.browsers.set(account.username, browser);
-
-      // Cập nhật vị trí cửa sổ
-      x += width;
-      if (x > 1024) {
-        x = 0;
-        y += height;
-      }
-    }
+    // Chạy tất cả các instance song song
+    await Promise.all(browserPromises);
   }
 
   // Lấy trình duyệt theo tên
@@ -70,7 +65,15 @@ class BrowserManager {
 
   // Đóng tất cả trình duyệt
   async closeAllBrowsers(): Promise<void> {
-    await Promise.all(Array.from(this.browsers.values()).map((browser) => browser.close()));
+    const closePromises = Array.from(this.browsers.values()).map(async (browser) => {
+      try {
+        await browser.close();
+      } catch (error) {
+        console.error('Error closing browser:', error);
+      }
+    });
+
+    await Promise.all(closePromises);
     this.browsers.clear();
     this.proxyAuthMap.clear();
   }
@@ -85,9 +88,8 @@ class BrowserManager {
 
     try {
       const page = await browser.newPage();
-      
-      // Lấy thông tin proxy auth nếu có
       const proxyAuth = this.proxyAuthMap.get(browserName);
+
       if (proxyAuth) {
         await page.authenticate(proxyAuth);
       }
@@ -95,13 +97,13 @@ class BrowserManager {
       // Cấu hình page
       await page.setExtraHTTPHeaders({ 'Accept-Language': 'en-US' });
       await page.setUserAgent(
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36'
       );
-      await page.setJavaScriptEnabled(true);
+      await page.setJavaScriptEnabled(true); // Mặc định đã bật, có thể bỏ dòng này
 
       return page;
     } catch (error) {
-      console.error('Error creating page:', error);
+      console.error(`Error creating page for ${browserName}:`, error);
       return undefined;
     }
   }
