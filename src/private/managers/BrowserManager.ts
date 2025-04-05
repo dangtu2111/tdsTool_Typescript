@@ -1,4 +1,4 @@
-import { truncate } from 'fs';
+
 import puppeteer, { Browser, Page } from 'puppeteer';
 
 class BrowserManager {
@@ -39,7 +39,7 @@ class BrowserManager {
       }
 
       const browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
         defaultViewport: null,
         args: browserArgs,
         executablePath: '/usr/bin/chromium-browser',
