@@ -5,6 +5,7 @@ import FacebookManager from './managers/FacebookManager';
 import InstagramManager from './managers/InstagramManager';
 import {tdsAccounts ,proxies} from './config';
 
+
 // Áp dụng plugin Stealth để tránh bị phát hiện
 puppeteer.use(StealthPlugin());
 
@@ -37,11 +38,11 @@ interface TDSAccount {
     const instagramManager = new InstagramManager(browserManager);
 
     // Các công việc Facebook cần thực hiện
-    const facebookJobs = [ 'facebook_follow','facebook_reaction'];
+    const facebookJobs = [ 'facebook_reaction'];
 
     try {
         // Thực hiện công việc cho Facebook
-        await facebookManager.main( facebookJobs, tdsAccounts,proxies);
+        await facebookManager.test( facebookJobs, tdsAccounts,proxies);
         
         // Nếu có tài khoản Instagram, có thể gọi hàm InstagramManager (bây giờ đang được comment)
         // await instagramManager.main(instagramAccounts, ['instagram_like']);
@@ -49,7 +50,10 @@ interface TDSAccount {
         console.error('Lỗi trong khi thực thi công việc:', error);
     } finally {
         // Đảm bảo các trình duyệt được đóng khi công việc hoàn thành
-        await browserManager.closeAllBrowsers();
+       
         console.log('Hoàn thành công việc.');
     }
+    // https://www.facebook.com/1125101646083724
+    // https://www.facebook.com/61556787756257_122224744322226258
+    // https://www.facebook.com/1116494126903395_1116494910236650
 })();

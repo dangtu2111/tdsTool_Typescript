@@ -18,7 +18,9 @@ class TDS {
             },
         });
     }
-
+    public getUsername(): string {
+        return this.username;
+      }
     /**
      * Lấy danh sách công việc từ Traodoisub.
      * @param type Loại công việc (vd: "facebook_reaction")
@@ -30,7 +32,11 @@ class TDS {
         try {
             console.log(`Đang gửi yêu cầu đến API với URL: ${url}`);
             const response: AxiosResponse<any> = await this.axiosInstance.get(url);
-            console.log("Dữ liệu trả về từ API: ", response.data);
+        
+            if(response.data.error=='Thao tác quá nhanh vui lòng chậm lại'){
+                await new Promise(resolve => setTimeout(resolve, response.data.countdown *1000));
+                this.api_get_job_fb(type);
+            }
             return response.data;
         } catch (error: any) {
             console.error("Lỗi khi gọi API:", error.message);

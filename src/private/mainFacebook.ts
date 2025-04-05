@@ -21,7 +21,7 @@ class FacebookAutomationManager  {
       case 'follow':
           await this.facebook.follow(this.page,job);
           break;
-      case 'like':
+      case 'facebook_reaction':
           await this.facebook.like(this.page,job);
           break;
           
